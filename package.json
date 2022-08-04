@@ -1,0 +1,43 @@
+{
+  "name": "wtf-is-webpack-and-babel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Code samples for a Lunch & Learn focused on foundations of Webpack & Babel",
+  "scripts": {
+    "start": "nodemon",
+    "build": "npx webpack --config webpack.config.js --debug",
+    "node:run": "node src/main.js",
+    "babel-node:run": "babel-node src/main.js"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.8.7",
+    "axios": "^0.27.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "webpack": "4.42.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.16.0",
+    "@babel/eslint-parser": "7.16.0",
+    "@babel/node": "^7.18.10",
+    "@babel/plugin-transform-runtime": "7.16.0",
+    "@babel/preset-env": "7.16.0",
+    "@babel/preset-react": "7.16.0",
+    "@webpack-cli/serve": "1.7.0",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^4.0.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "html-webpack-plugin": "4",
+    "nodemon": "1.18.4",
+    "prettier": "^2.7.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.3"
+  },
+  "keywords": [],
+  "packageManager": "yarn@3.2.2"
+}

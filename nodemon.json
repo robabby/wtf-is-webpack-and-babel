@@ -1,0 +1,13 @@
+{
+  "watch": [
+    "babel.config.js",
+    "webpack.config.js"
+  ],
+  "ignore": [
+    "public/*",
+    "src/*",
+    "test/*",
+    "dist/*"
+  ],
+  "exec": "NODE_ENV=development webpack-dev-server --mode development"
+}
