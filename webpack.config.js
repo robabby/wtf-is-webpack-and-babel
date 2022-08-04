@@ -1,16 +1,20 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WebpackAssetsManifest = require("webpack-assets-manifest");
 const path = require("path");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
 module.exports = {
-  target: "web",
   mode: isDevelopment ? "development" : "production",
-  entry: "./src/app.mount.jsx",
+  target: "web",
+  context: path.resolve(__dirname, "src"),
+  entry: "./app.mount.jsx",
   output: {
-    path: path.resolve(__dirname, "./dist"),
-    filename: "bundle.js"
+    publicPath: path.resolve(__dirname, "public"),
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name]-[hash].js",
+    chunkFilename: "[id]-[chunkhash].js"
   },
   optimization: {
     minimize: false
@@ -18,17 +22,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx$/,
+        test: /\.jsx?$/,
+        include: path.resolve(__dirname, "src"),
+        exclude: /(node_modules)/,
         loader: "babel-loader",
         options: {
           cacheDirectory: true
-        }
-      },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: "babel-loader"
         }
       }
     ]
@@ -38,6 +37,7 @@ module.exports = {
     modules: ["node_modules"]
   },
   devServer: {
+    compress: true,
     hot: true,
     setupExitSignals: true,
     watchFiles: {
@@ -48,16 +48,12 @@ module.exports = {
         // poll: 2000
       }
     },
-    static: {
-      directory: path.join(__dirname, "dist")
-    },
-    compress: true,
     port: 9000,
     devMiddleware: {
-      index: true,
+      // index: true,
       // mimeTypes: { phtml: "text/html" },
       // publicPath: "/public",
-      serverSideRender: true,
+      // serverSideRender: true,
       writeToDisk: true
     }
   },
@@ -66,10 +62,16 @@ module.exports = {
       verbose: true,
       watch: true
     }),
+    new WebpackAssetsManifest({
+      writeToDisk: true,
+      output: path.resolve(__dirname, "dist/manifest.json"),
+      publicPath: "../public"
+    }),
     new HtmlWebpackPlugin({
+      favicon: path.resolve(__dirname, "public/favicon.ico"),
+      // filename: "index.html",
       title: "wtf is Babel & Webpack!?",
-      favicon: "./public/favicon.ico",
-      template: "src/index.ejs"
+      template: "./index.ejs"
     })
   ]
 };

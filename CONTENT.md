@@ -3,66 +3,381 @@ marp: true
 author: Rob Abby (robabby@outlook.com)
 title: WTF is Webpack & Babel
 paginate: true
-theme: default
+# header: WTF!?
+theme: gaia
+# color: "#ffffff"
+style: |
+  section {
+    background-color: #232323;
+    color: #fff;
+  }
+  section.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+  }
+  section.v-centered {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+  }
+  section.v-centered-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-items: center;
+    width: 100%;
+  }
+  img {
+    max-width: 100%;
+  }
+  h1 {
+    color: #7BAE7F;
+  }
+  h2, h3, h4, h5, h6 {
+    color: #F4F3EE;
+  }
+  p {
+    color: #fff;
+  }
+  a {
+    color: #2196f3;
+  }
+  blockquote {
+    border-color: #3c6e71;
+  }
+  blockquote p,
+  blockquote li {
+    color: #d9d9d9;
+  }
+  table th{
+    border:1px solid #d0d7de;
+    padding:6px 13px;
+  }
+  table td,
+  table tr {
+    background-color:#383838;
+    border-top:1px solid #626262;
+  }
+  table tr:nth-child(2n) {
+    background-color:#4d4d4d
+  }
+  code, pre {
+    background-color: #353535;
+  }
+  pre {
+    width: 100%;
+  }
 ---
 
-<!-- _paginate: false -->
+<!--
+_paginate: false
+_header: ""
+_class: v-centered
+-->
 
 # WTF is Webpack & Babel
 
 ---
 
-## Overview
+<!--
+_class: v-centered
+-->
 
-This lesson will be split in two main sections.
-
-Part one is a high-level historical review of JavaScript and web browsers. We'll also look at Babel & Webpack. By the end we should have a general understanding of the problems they solve and their purpose in web development.
-
-The second will be a demonstration of webpack & babel, writing and compiling code samples to help learning the core concepts.
+# Webpack
 
 ---
 
-# WhatScript
+<!--
+_header: "How webpack describes itself"
+_footer: https://webpack.js.org/concepts/
+_class: v-centered
+-->
 
-While JavaScript is typically the name used when mentioning the language, often we're actually talking about **ECMAScript**.
+> At its core, webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a dependency graph from one or more entry points and then combines every module your project needs into one or more bundles, which are static assets to serve your content from.
+
+---
+
+<!--
+_header: "**wtf!?**"
+_class: v-centered
+-->
+
+> Webpack takes **many things** and returns them as **one** or more **static** thing(s).
+
+---
+
+<!--
+_class: v-centered
+-->
+
+# Babel
+
+---
+
+<!--
+_header: "How Babel describes itself"
+_footer: https://babeljs.io/docs/en/
+-->
+
+> ##### Babel is a JavaScript compiler
+>
+> Babel is a toolchain that is mainly used to convert ECMAScript 2015+ code into a backwards compatible version of JavaScript in current and older browsers or environments. Here are the main things Babel can do for you:
+>
+> - Transform syntax
+> - Polyfill features that are missing in your target environment (through a third-party polyfill such as core-js)
+> - Source code transformations (codemods)
+
+---
+
+<!--
+_header: "**wtf!?**"
+_class: v-centered
+-->
+
+#### Babel lets us write code using new or proposed language features, and rewrites them in older syntax so it runs in older browsers
+
+---
+
+<!--
+_class: v-centered
+-->
+
+# Putting it all together
+
+---
+
+<!--
+_header: "**1. Webpack is pointed to the file(s) we want bundled**"
+_footer: "**webpack.config.js**"
+-->
+
+```js
+module.exports = {
+  mode: process.env.NODE_ENV,
+  target: "web",
+  entry: "./app.mount.jsx", <--- The entry to our code
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /(node_modules)/,
+        loader: "babel-loader"
+      }
+    ]
+  }
+}
+```
+
+---
+
+<!--
+_header: 2. Webpack builds a Dependency Graph of every module the application needs
+_footer: https://webpack.js.org/concepts/dependency-graph/
+_class: centered
+-->
+
+![Dependency Graph](public/dependency-graph.png)
+
+---
+
+<!--
+_header: 3. Webpack hands the required files off to Babel for processing
+_footer: "**webpack.config.js**"
+-->
+
+```js
+module.exports = {
+  mode: process.env.NODE_ENV,
+  target: "web",
+  entry: "./app.mount.jsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/, <- Any *.js or *.jsx file is handled by babel
+        exclude: /(node_modules)/,
+        loader: "babel-loader"
+      }
+    ]
+  }
+}
+```
+
+---
+
+<!--
+_header: 4. Babel will update the code based on how it is configured (transpile, polyfills, etc.)
+_footer: "**babel.config.js**"
+_class: v-centered
+-->
+
+```js
+module.exports = {
+  presets: [["@babel/preset-env"], "@babel/preset-react"]
+};
+```
+
+---
+
+<!--
+_header: "**5. Babel returns the updated files to Webpack**"
+_footer: "**webpack.config.js**"
+-->
+
+```js
+module.exports = {
+  mode: process.env.NODE_ENV,
+  target: "web",
+  entry: "./app.mount.jsx",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+  },
+  optimization: {
+    minimize: true  <-- Webpack optimizes files before outputting
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /(node_modules)/,
+        loader: "babel-loader"
+      }
+    ]
+  }
+}
+```
+
+---
+
+<!--
+_class: v-centered
+_header: "**Compiling...**"
+-->
+
+## 6. Webpack combines everything into a single `bundle.js`
+
+---
+
+<!--
+_class: centered
+_header: "**This...**"
+-->
+
+> ![client/src](public/client-src.png) ![client/src](public/ps-web-node-modules.png)
+
+---
+
+<!-- _class: centered -->
+
+# Becomes this :tada:
+
+![bundle.js](public/js-sparkle.png)
+
+---
+
+# Zooming In :mag:
+
+When considering a modern web development project, much of the underlying tools that enable how we work are hidden behind abstractions.
+
+---
+
+# Dependencies of dependencies
+
+- [`@babel/preset-env`](https://babeljs.io/docs/en/babel-preset-env)
+  - [`core-js`](https://github.com/zloirock/core-js)
+    - Modular standard library for JavaScript. Includes polyfills for ECMAScript up to 2023
+  - [`browserslist`](https://github.com/browserslist/browserslist)
+    - The config to share target browsers and Node.js versions between different front-end tools. It is used in
+
+---
+
+<!--
+_class: v-centered-col
+_header: "**Polywhat?**"
+-->
+
+# Polyfill
+
+A polyfill is a piece of code (usually JavaScript on the Web) used to **provide modern functionality on older browsers** that do not natively support it.
+
+Polyfills are also used to address issues where browsers implement **the same features in different ways**.
+
+---
+
+<!--
+_header: "**wtf!?**"
+_footer: https://github.com/zloirock/core-js/blob/master/packages/core-js/modules/es.array.includes.js
+_class: v-centered
+-->
+
+A polyfill is when you add a feature from new javascript to old javascript by writing it in ES5/ES6 syntax. They can be slower in performance due to the extra code required.
+
+---
+
+# Living with Evergreen :evergreen_tree:
+
+## Browser Support
+
+Since major Web Browsers have adopted an evergreen release strategy, support for new ECMA features is **fast**.
 
 ---
 
 # `ECMAScript !== JavaScript`
 
 | Name       | Description                                              |
-| ---------- | -------------------------------------------------------- |
+| ---------- | -------------------------------------------------------- | --- |
 | ECMAScript | The committee defined standards and language features    |
 | JavaScript | ECMA standard applied to code that runs in a web browser |
-| Node.js    | ECMA standard applied to code that runs on a computer    |
+| Node.js    | ECMA standard applied to code that runs on a computer    |     |
 
 ---
 
-#
+# ECMA Versions & Support
 
-| Name   | Contents                                                                                                                                |
-| ------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| ES5    | Core definitions for all ES3 and ES5 functionality                                                                                      |
-| ES2015 | Additional APIs available in ES2015 (also known as ES6) - array.find, Promise, Proxy, Symbol, Map, Set, Reflect, etc.                   |
-| ES6    | Alias for “ES2015”                                                                                                                      |
-| ES2016 | Additional APIs available in ES2016 - array.include, etc.                                                                               |
-| ES7    | Alias for “ES2016”                                                                                                                      |
-| ES2017 | Additional APIs available in ES2017 - Object.entries, Object.values, Atomics, SharedArrayBuffer, date.formatToParts, typed arrays, etc. |
-| ES2018 | Additional APIs available in ES2018 - async iterables, promise.finally, Intl.PluralRules, regexp.groups, etc.                           |
-| ES2019 | Additional APIs available in ES2019 - array.flat, array.flatMap, Object.fromEntries, string.trimStart, string.trimEnd, etc.             |
-| ES2020 | Additional APIs available in ES2020 - string.matchAll, etc.                                                                             |
-| ES2021 | Additional APIs available in ES2021 - promise.any, string.replaceAll etc.                                                               |
-| ESNext | Additional APIs available in ESNext - This changes as the JavaScript specification evolves                                              |
+- [tsconfig `lib`](https://www.typescriptlang.org/tsconfig#lib)
+- [ES2016+ Compatibility Table](https://kangax.github.io/compat-table/es2016plus/)
+- [ECMAScript 2015 (ES6)](https://caniuse.com/es6)
+- [ECMAScript 2016 (ES7)](https://caniuse.com/?search=ES2016)
+- [ECMAScript 2017 (ES8)](https://caniuse.com/?search=ES2017)
+- [ECMAScript 2018 (ES9)](https://caniuse.com/sr_es9)
+- [ECMAScript 2019 (ES10)](https://caniuse.com/sr_es10)
+- [ECMAScript 2020 (ES11)](https://caniuse.com/sr_es11)
+- [ECMAScript 2021 (ES12)](https://caniuse.com/sr_es12)
 
 ---
 
-# Living with Evergreen :evergreen_tree:
+# Tools
 
-With _most_ major Web Browsers have adopted an evergreen release strategy (looking at you, Safari :eyes:), `ESNext` can be a valid and reasonable compile target.
+- **Babel**
+  - [Babel Repl](https://babeljs.io/repl)
+  - [`shippedProposals`](https://babeljs.io/docs/en/babel-preset-env#shippedproposals)
+- [CanIUse](https://caniuse.com)
+  - [Decorators](https://caniuse.com/decorators)
+  - [`BigInt`](https://caniuse.com/bigint)
+  - [`String.prototype.includes`](https://caniuse.com/es6-string-includes)
+  - [Logical OR assignment (||=)](https://caniuse.com/mdn-javascript_operators_logical_or_assignment)
 
-The wait for new ECMA support is weeks.
+---
 
-This is **radically** different than how ECMA and major browsers operated until 2015.
+<!--
+_header: "**wtf!?**"
+_footer: https://github.com/zloirock/core-js/blob/master/packages/core-js/modules/es.array.includes.js
+_class: v-centered
+-->
+
+# The End
 
 ---
 
@@ -102,73 +417,21 @@ This is **radically** different than how ECMA and major browsers operated until 
 
 ---
 
-# Webpack
+<!--
+_header: ECMA Versions
+_footer: https://www.typescriptlang.org/tsconfig#lib
+-->
 
-How [`webpack` describes itself](https://webpack.js.org/concepts/):
-
-> At its core, webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a dependency graph from one or more entry points and then combines every module your project needs into one or more bundles, which are static assets to serve your content from.
-
----
-
-A simplified description:
-
-> Webpack takes **many things** and returns them as **one** or more thing(s).
-
----
-
-# Babel
-
-How [Babel describes itself](https://babeljs.io/docs/en/):
-
-> ### Babel is a JavaScript compiler
->
-> Babel is a toolchain that is mainly used to convert ECMAScript 2015+ code into a backwards compatible version of JavaScript in current and older browsers or environments. Here are the main things Babel can do for you:
->
-> - Transform syntax
-> - Polyfill features that are missing in your target environment (through a third-party polyfill such as core-js)
-> - Source code transformations (codemods)
-
----
-
-A simplified description:
-
-> Babel takes `*.js` files and converts them from one version of ECMAScript to another.
-
----
-
-### Operation Simplify
-
-It's often helpful to zoom out and simplify complex situations. When considering a modern web development project, much of the underlying tools that enable how we work are hidden behind abstractions.
-
----
-
-# Simplifying what Babel & Webpack do
-
-- Webpack is given the file(s) **we** tell it to
-- Webpack takes our code and builds a Dependency Graph of every module application needs (`node_modules`, SCSS, YML, SVG, etc.)
-- Webpack hands the required files off to Babel to process (transpile, polyfills, etc.)
-- Babel returns the updated files to Webpack
-- Webpack combines everything into a single `bundle.js`
-
----
-
-| This :slightly_frowning_face:        | Becomes this :tada:                 |
-| ------------------------------------ | ----------------------------------- |
-| ![client/src](public/client-src.png) | ![bundle.js](public/js-sparkle.png) |
-
----
-
-# Tools
-
-- [Babel Repl](https://babeljs.io/repl)
-- [CanIUse](https://caniuse.com)
-  - [Decorators](https://caniuse.com/decorators)
-  - [`BigInt`](https://caniuse.com/bigint)
-  - [`String.prototype.includes`](https://caniuse.com/es6-string-includes)
-
-### Packages behind the Scenes
-
-- [`core-js`](https://github.com/zloirock/core-js)
-- [`browserslist`](https://github.com/browserslist/browserslist)
-
-## 2. Coding Exercise
+| Name   | Contents                                                                                                                                |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| ES5    | Core definitions for all ES3 and ES5 functionality                                                                                      |
+| ES2015 | Additional APIs available in ES2015 (also known as ES6) - array.find, Promise, Proxy, Symbol, Map, Set, Reflect, etc.                   |
+| ES6    | Alias for “ES2015”                                                                                                                      |
+| ES2016 | Additional APIs available in ES2016 - array.include, etc.                                                                               |
+| ES7    | Alias for “ES2016”                                                                                                                      |
+| ES2017 | Additional APIs available in ES2017 - Object.entries, Object.values, Atomics, SharedArrayBuffer, date.formatToParts, typed arrays, etc. |
+| ES2018 | Additional APIs available in ES2018 - async iterables, promise.finally, Intl.PluralRules, regexp.groups, etc.                           |
+| ES2019 | Additional APIs available in ES2019 - array.flat, array.flatMap, Object.fromEntries, string.trimStart, string.trimEnd, etc.             |
+| ES2020 | Additional APIs available in ES2020 - string.matchAll, etc.                                                                             |
+| ES2021 | Additional APIs available in ES2021 - promise.any, string.replaceAll etc.                                                               |
+| ESNext | Additional APIs available in ESNext - This changes as the JavaScript specification evolves                                              |

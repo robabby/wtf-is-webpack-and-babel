@@ -1,4 +1,4 @@
-// import { getLocation, getWeather } from "./async";
+import { getLocation, getWeather } from "./async";
 
 class Rectangle {
   constructor(height, width) {
@@ -19,6 +19,6 @@ const square = new Rectangle(10, 10);
 
 console.log(square.area);
 
-// getLocation();
+getLocation();
 
-// getWeather({});
+getWeather({});

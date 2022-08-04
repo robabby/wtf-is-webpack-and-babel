@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "description": "Code samples for a Lunch & Learn focused on foundations of Webpack & Babel",
   "scripts": {
-    "start": "nodemon",
-    "build": "npx webpack --config webpack.config.js --debug",
+    "start": "webpack-dev-server --mode development",
+    "build": "NODE_ENV=production webpack",
     "node:run": "node src/main.js",
     "babel-node:run": "babel-node src/main.js"
   },
@@ -35,6 +35,7 @@
     "html-webpack-plugin": "4",
     "nodemon": "1.18.4",
     "prettier": "^2.7.1",
+    "webpack-assets-manifest": "4",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"
   },
